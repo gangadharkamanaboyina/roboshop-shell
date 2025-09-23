@@ -21,16 +21,32 @@ for instance in "$@"; do
             --instance-ids "$InstanceId" \
             --query "Reservations[*].Instances[*].PublicIpAddress" \
             --output text)
+
+                  # Update Route 53
+    aws route53 change-resource-record-sets \
+        --hosted-zone-id "$HOSTED_ZONE_ID" \
+        --change-batch "{
+          \"Comment\": \"Update $instance record\",
+          \"Changes\": [
+            {
+              \"Action\": \"UPSERT\",
+              \"ResourceRecordSet\": {
+                \"Name\": \"$DOMAIN\",
+                \"Type\": \"A\",
+                \"TTL\": 1,
+                \"ResourceRecords\": [{\"Value\": \"$IP\"}]
+              }
+            }
+          ]
+        }"
+
     else
         IP=$(aws ec2 describe-instances \
             --instance-ids "$InstanceId" \
             --query "Reservations[*].Instances[*].PrivateIpAddress" \
             --output text)
-    fi
 
-    echo "$instance: $IP"
-
-         # Update Route 53
+                  # Update Route 53
     aws route53 change-resource-record-sets \
         --hosted-zone-id "$HOSTED_ZONE_ID" \
         --change-batch "{
@@ -48,4 +64,9 @@ for instance in "$@"; do
           ]
         }"
 
+    fi
+
+    echo "$instance: $IP"
+
+   
 done
