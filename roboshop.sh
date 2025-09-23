@@ -22,7 +22,7 @@ for instance in "$@"; do
             --query "Reservations[*].Instances[*].PublicIpAddress" \
             --output text)
 
-                  # Update Route 53
+                  # Update Route 53 for front end with Public IP
     aws route53 change-resource-record-sets \
         --hosted-zone-id "$HOSTED_ZONE_ID" \
         --change-batch "{
@@ -46,7 +46,7 @@ for instance in "$@"; do
             --query "Reservations[*].Instances[*].PrivateIpAddress" \
             --output text)
 
-                  # Update Route 53
+                  # Update Route 53 for other instances with Private IP
     aws route53 change-resource-record-sets \
         --hosted-zone-id "$HOSTED_ZONE_ID" \
         --change-batch "{
