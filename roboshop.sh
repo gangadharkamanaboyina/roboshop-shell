@@ -19,7 +19,7 @@ do
 
   else
 
-        IP$(aws ec2 describe-instances \
+        IP=$(aws ec2 describe-instances \
   --instance-ids $InstanceId \
   --query "Reservations[*].Instances[*].PrivateIpAddress" \
   --output text)
