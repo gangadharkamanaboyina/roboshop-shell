@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for instance in $@ 
+for instance in "$@"; 
 do
       InstanceId=$(aws ec2 run-instances \
   --image-id ami-09c813fb71547fc4f \
@@ -10,7 +10,7 @@ do
   --query "Instances[0].InstanceId" \
   --output text)
 
-  if(($instance=="frontend")); then
+  if[[ $instance=="frontend" ]]; then
 
         IP=$(aws ec2 describe-instances \
   --instance-ids $InstanceId \
