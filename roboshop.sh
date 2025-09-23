@@ -9,8 +9,8 @@ for instance in "$@"; do
         --query "Instances[0].InstanceId" \
         --output text)
 
-    # wait for instance to be running
-   # aws ec2 wait instance-running --instance-ids "$InstanceId"
+    # if we want to wait for instance to be running
+    # aws ec2 wait instance-running --instance-ids "$InstanceId"
 
     if [[ "$instance" == "frontend" ]]; then
         IP=$(aws ec2 describe-instances \
@@ -25,4 +25,22 @@ for instance in "$@"; do
     fi
 
     echo "$instance: $IP"
+
+    {
+  "Comment": "Update record to new IP",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "$instance.gangu.fun",
+        "Type": "A",
+        "TTL": 1,
+        "ResourceRecords": [
+          { "Value": "1.2.3.4" }
+        ]
+      }
+    }
+  ]
+}
+
 done
