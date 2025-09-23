@@ -1,5 +1,9 @@
 #!/bin/bash
 
+HOSTED_ZONE_ID="Z09642611L8N3EK9H86BE"
+DOMAIN="gangu.fun"
+
+
 for instance in "$@"; do
     InstanceId=$(aws ec2 run-instances \
         --image-id ami-09c813fb71547fc4f \
@@ -26,21 +30,22 @@ for instance in "$@"; do
 
     echo "$instance: $IP"
 
-    {
-  "Comment": "Update record to new IP",
-  "Changes": [
-    {
-      "Action": "UPSERT",
-      "ResourceRecordSet": {
-        "Name": "$instance.gangu.fun",
-        "Type": "A",
-        "TTL": 1,
-        "ResourceRecords": [
-          { "Value": "1.2.3.4" }
-        ]
-      }
-    }
-  ]
-}
+         # Update Route 53
+    aws route53 change-resource-record-sets \
+        --hosted-zone-id "$HOSTED_ZONE_ID" \
+        --change-batch "{
+          \"Comment\": \"Update $instance record\",
+          \"Changes\": [
+            {
+              \"Action\": \"UPSERT\",
+              \"ResourceRecordSet\": {
+                \"Name\": \"$instance.$DOMAIN\",
+                \"Type\": \"A\",
+                \"TTL\": 1,
+                \"ResourceRecords\": [{\"Value\": \"$IP\"}]
+              }
+            }
+          ]
+        }"
 
 done
