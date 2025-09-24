@@ -34,3 +34,7 @@ systemctl enable mongod
 Validate $? "Enable Mongodb"
 systemctl start mongod 
 Validate $? "Start Mongodb"
+
+sed -i 's/127.0.0.0/0.0.0.0/g' /etc/mongod.conf
+systemctl restart mongod
+Validate $? "Restart Mongodb"
