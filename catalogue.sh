@@ -26,8 +26,8 @@ Validate(){
     fi
 }
 
-dnf module disable nodejs -y
-dnf module enable nodejs:20 -y
+dnf module disable nodejs -y &>>$Log_File
+dnf module enable nodejs:20 -y &>>$Log_File
 dnf install nodejs -y &>>$Log_File
 Validate $? "Nodejs Installation"
 id roboshop
@@ -62,6 +62,6 @@ DB_EXISTS=$(mongosh --host mongodb.gangu.fun --quiet --eval \
 if [ "$DB_EXISTS" == "true" ]; then
     echo -e "$Y Database catalogue already exists. Skipping master-data.js import. $W"
 else
-    mongosh --host mongodb.gangu.fun </app/db/master-data.js
+    mongosh --host mongodb.gangu.fun </app/db/master-data.js &>>$Log_File
     Validate $? "Loading master data"
 fi
