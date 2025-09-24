@@ -2,7 +2,14 @@
 
 HOSTED_ZONE_ID="Z09642611L8N3EK9H86BE"
 DOMAIN="gangu.fun"
-
+PublicIP=$(aws ec2 describe-instances \
+            --instance-ids "$InstanceId" \
+            --query "Reservations[*].Instances[*].PublicIpAddress" \
+            --output text)
+PrivateIP=$(aws ec2 describe-instances \
+            --instance-ids "$InstanceId" \
+            --query "Reservations[*].Instances[*].PrivateIpAddress" \
+            --output text)
 
 for instance in "$@"; do
     InstanceId=$(aws ec2 run-instances \
@@ -17,10 +24,6 @@ for instance in "$@"; do
     aws ec2 wait instance-running --instance-ids "$InstanceId"
 
     if [[ "$instance" == "frontend" ]]; then
-        PublicIP=$(aws ec2 describe-instances \
-            --instance-ids "$InstanceId" \
-            --query "Reservations[*].Instances[*].PublicIpAddress" \
-            --output text)
 
                   # Update Route 53 for front end with Public IP
     aws route53 change-resource-record-sets \
@@ -33,7 +36,7 @@ for instance in "$@"; do
               \"ResourceRecordSet\": {
                 \"Name\": \"$DOMAIN\",
                 \"Type\": \"A\",
-                \"TTL\": 1,
+                \"TTL\": 30,
                 \"ResourceRecords\": [{\"Value\": \"$PublicIP\"}]
               }
             }
@@ -41,10 +44,6 @@ for instance in "$@"; do
         }"
 
     else
-        PrivateIP=$(aws ec2 describe-instances \
-            --instance-ids "$InstanceId" \
-            --query "Reservations[*].Instances[*].PrivateIpAddress" \
-            --output text)
 
                   # Update Route 53 for other instances with Private IP
     aws route53 change-resource-record-sets \
@@ -57,7 +56,7 @@ for instance in "$@"; do
               \"ResourceRecordSet\": {
                 \"Name\": \"$instance.$DOMAIN\",
                 \"Type\": \"A\",
-                \"TTL\": 1,
+                \"TTL\": 30,
                 \"ResourceRecords\": [{\"Value\": \"$PrivateIP\"}]
               }
             }
