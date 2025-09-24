@@ -34,7 +34,7 @@ for instance in "$@"; do
                 \"Name\": \"$DOMAIN\",
                 \"Type\": \"A\",
                 \"TTL\": 1,
-                \"ResourceRecords\": [{\"Value\": \"$IP\"}]
+                \"ResourceRecords\": [{\"Value\": \"$PublicIP\"}]
               }
             }
           ]
@@ -58,7 +58,7 @@ for instance in "$@"; do
                 \"Name\": \"$instance.$DOMAIN\",
                 \"Type\": \"A\",
                 \"TTL\": 1,
-                \"ResourceRecords\": [{\"Value\": \"$IP\"}]
+                \"ResourceRecords\": [{\"Value\": \"$PrivateIP\"}]
               }
             }
           ]
