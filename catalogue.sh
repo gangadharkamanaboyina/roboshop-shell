@@ -46,7 +46,7 @@ cp $Script_Direc/catalogue.service /etc/systemd/system/catalogue.service
 systemctl daemon-reload
 systemctl enable catalogue 
 
-dnf list installed mongodb-org &>>$Log_File
+dnf list installed mongodb-mongosh &>>$Log_File
      if(($?!=0)); then
          cp $Script_Direc/mongodb.repo /etc/yum.repos.d/mongo.repo &>>$Log_File
          Validate $? "Adding Mongo repo"
@@ -59,9 +59,11 @@ dnf list installed mongodb-org &>>$Log_File
 DB_EXISTS=$(mongosh --host mongodb.gangu.fun --quiet --eval \
 "db.adminCommand('listDatabases').databases.map(d => d.name).includes('catalogue')" )
 
-if [ "$DB_EXISTS" == "true" ]; then
+if [ "$DB_EXISTS" == "true" ]; then 
     echo -e "$Y Database catalogue already exists. Skipping master-data.js import. $W"
 else
     mongosh --host mongodb.gangu.fun </app/db/master-data.js &>>$Log_File
     Validate $? "Loading master data"
 fi
+systemctl restart catalogue
+Validate $? "Catalogue service restart"
