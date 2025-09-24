@@ -45,3 +45,5 @@ npm install &>>$Log_File
 cp $Script_Direc/user.service /etc/systemd/system/user.service
 systemctl daemon-reload
 systemctl enable user 
+systemctl restart user
+systemctl status user
