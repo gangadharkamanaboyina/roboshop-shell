@@ -35,6 +35,6 @@ systemctl start nginx
 rm -rf /usr/share/nginx/html/* 
 curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
 cd /usr/share/nginx/html 
-unzip /tmp/frontend.zip
-cp $Script_Direc/nginx.conf /etc/nginx/nginx.conf
+unzip /tmp/frontend.zip &>>$Log_File
+cp $Script_Direc/nginx.conf /etc/nginx/nginx.conf &>>$Log_File
 systemctl restart nginx 
