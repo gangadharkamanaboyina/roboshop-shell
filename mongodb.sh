@@ -5,7 +5,7 @@ G="\e[32m"
 W="\e[0m"
 Y="\e[33m"
 
-Log_Folder="/var/log/shell-prac"
+Log_Folder="/var/log/roboshop"
 File_Name=$( echo $0 | cut -d "." -f1 )
 Log_File="$Log_Folder/$File_Name.log"
 
@@ -26,15 +26,16 @@ Validate(){
     fi
 }
 
-cp mongodb.repo /etc/yum.repos.d/mongo.repo
+cp mongodb.repo /etc/yum.repos.d/mongo.repo &>>$Log_File
 Validate $? "Adding Mongo repo"
-dnf install mongodb-org -y 
+dnf install mongodb-org -y &>>$Log_File
 Validate $? "Installing Mongodb"
-systemctl enable mongod 
-Validate $? "Enable Mongodb"
-systemctl start mongod 
+systemctl enable mongod &>>$Log_File
+Validate $? "Enable Mongodb" 
+systemctl start mongod &>>$Log_File
 Validate $? "Start Mongodb"
 
-sed -i 's/127.0.0.0/0.0.0.0/g' /etc/mongod.conf
-systemctl restart mongod
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>>$Log_File
+
+systemctl restart mongod &>>$Log_File
 Validate $? "Restart Mongodb"
