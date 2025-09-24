@@ -17,7 +17,7 @@ for instance in "$@"; do
     # aws ec2 wait instance-running --instance-ids "$InstanceId"
 
     if [[ "$instance" == "frontend" ]]; then
-        IP=$(aws ec2 describe-instances \
+        PublicIP=$(aws ec2 describe-instances \
             --instance-ids "$InstanceId" \
             --query "Reservations[*].Instances[*].PublicIpAddress" \
             --output text)
@@ -41,7 +41,7 @@ for instance in "$@"; do
         }"
 
     else
-        IP=$(aws ec2 describe-instances \
+        PrivateIP=$(aws ec2 describe-instances \
             --instance-ids "$InstanceId" \
             --query "Reservations[*].Instances[*].PrivateIpAddress" \
             --output text)
@@ -66,7 +66,8 @@ for instance in "$@"; do
 
     fi
 
-    echo "$instance: $IP"
+    echo "$instance: $PublicIP"
+    echo "$instance: $PrivateIP"
 
    
 done
