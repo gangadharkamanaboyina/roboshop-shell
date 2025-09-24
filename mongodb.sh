@@ -33,7 +33,7 @@ dnf list installed mongodb-org &>>$Log_File
       dnf install mongodb-org -y &>>$Log_File
       Validate $? "Installing Mongodb"
      else
-       echo -e "$Y $package already installed $W" 
+       echo -e "$Y Mongodb already installed $W" 
      fi
 
 
