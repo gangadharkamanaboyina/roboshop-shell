@@ -26,10 +26,17 @@ Validate(){
     fi
 }
 
-cp mongodb.repo /etc/yum.repos.d/mongo.repo &>>$Log_File
-Validate $? "Adding Mongo repo"
-dnf install mongodb-org -y &>>$Log_File
-Validate $? "Installing Mongodb"
+dnf list installed mongodb-org &>>$Log_File
+     if(($?!=0)); then
+      cp mongodb.repo /etc/yum.repos.d/mongo.repo &>>$Log_File
+      Validate $? "Adding Mongo repo"
+      dnf install mongodb-org -y &>>$Log_File
+      Validate $? "Installing Mongodb"
+     else
+       echo -e "$Y $package already installed $W" 
+     fi
+
+
 systemctl enable mongod &>>$Log_File
 Validate $? "Enable Mongodb" 
 systemctl start mongod &>>$Log_File
