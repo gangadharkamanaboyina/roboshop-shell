@@ -14,7 +14,7 @@ for instance in "$@"; do
         --output text)
 
     # if we want to wait for instance to be running
-    # aws ec2 wait instance-running --instance-ids "$InstanceId"
+    aws ec2 wait instance-running --instance-ids "$InstanceId"
 
     if [[ "$instance" == "frontend" ]]; then
         PublicIP=$(aws ec2 describe-instances \
