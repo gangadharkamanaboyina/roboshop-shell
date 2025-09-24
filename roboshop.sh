@@ -2,14 +2,6 @@
 
 HOSTED_ZONE_ID="Z09642611L8N3EK9H86BE"
 DOMAIN="gangu.fun"
-PublicIP=$(aws ec2 describe-instances \
-            --instance-ids "$InstanceId" \
-            --query "Reservations[*].Instances[*].PublicIpAddress" \
-            --output text)
-PrivateIP=$(aws ec2 describe-instances \
-            --instance-ids "$InstanceId" \
-            --query "Reservations[*].Instances[*].PrivateIpAddress" \
-            --output text)
 
 for instance in "$@"; do
     InstanceId=$(aws ec2 run-instances \
@@ -22,6 +14,15 @@ for instance in "$@"; do
 
     # if we want to wait for instance to be running
     aws ec2 wait instance-running --instance-ids "$InstanceId"
+
+    PublicIP=$(aws ec2 describe-instances \
+            --instance-ids "$InstanceId" \
+            --query "Reservations[*].Instances[*].PublicIpAddress" \
+            --output text)
+PrivateIP=$(aws ec2 describe-instances \
+            --instance-ids "$InstanceId" \
+            --query "Reservations[*].Instances[*].PrivateIpAddress" \
+            --output text)
 
     if [[ "$instance" == "frontend" ]]; then
 
