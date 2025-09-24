@@ -28,7 +28,7 @@ Validate(){
 
 dnf module disable nodejs -y
 dnf module enable nodejs:20 -y
-dnf install nodejs -y
+dnf install nodejs -y &>>$Log_File
 Validate $? "Nodejs Installation"
 id roboshop
 if [ $? -ne 0 ]; then
@@ -41,10 +41,19 @@ curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue
 cd /app 
 rm -rf /app/*
 unzip /tmp/catalogue.zip
-npm install 
+npm install &>>$Log_File
 cp $Script_Direc/catalogue.service /etc/systemd/system/catalogue.service
 systemctl daemon-reload
 systemctl enable catalogue 
-#cp $Script_Direc/mongodb.repo /etc/yum.repos.d/mongo.repo
-#dnf install mongodb-mongosh -y
-#mongosh --host MONGODB-SERVER-IPADDRESS </app/db/master-data.js
+
+dnf list installed mongodb-org &>>$Log_File
+     if(($?!=0)); then
+         cp $Script_Direc/mongodb.repo /etc/yum.repos.d/mongo.repo &>>$Log_File
+         Validate $? "Adding Mongo repo"
+         dnf install mongodb-mongosh -y &>>$Log_File
+         Validate $? "Installing Mongodb"
+     else
+         echo -e "$Y Mongodb already installed $W" 
+     fi
+
+mongosh --host mongodb.gangu.fun </app/db/master-data.js
