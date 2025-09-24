@@ -55,5 +55,13 @@ dnf list installed mongodb-org &>>$Log_File
      else
          echo -e "$Y Mongodb already installed $W" 
      fi
+#INDEX=$(mongosh mongodb.daws86s.fun --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')")
+DB_EXISTS=$(mongosh --host mongodb.gangu.fun --quiet --eval \
+"db.adminCommand('listDatabases').databases.map(d => d.name).includes('catalogue')" )
 
-mongosh --host mongodb.gangu.fun </app/db/master-data.js
+if [ "$DB_EXISTS" == "true" ]; then
+    echo -e "$Y Database catalogue already exists. Skipping master-data.js import. $W"
+else
+    mongosh --host mongodb.gangu.fun </app/db/master-data.js
+    Validate $? "Loading master data"
+fi
