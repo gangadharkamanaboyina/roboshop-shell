@@ -66,8 +66,8 @@ for instance in "$@"; do
 
     fi
 
-    echo "$instance: $PublicIP"
-    echo "$instance: $PrivateIP"
+    echo "$instance: PublicIP is $PublicIP"
+    echo "$instance: PrivateIP is $PrivateIP"
 
    
 done
